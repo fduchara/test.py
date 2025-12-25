@@ -22,8 +22,10 @@ GAME = False
 # print(questions[0][0])
 # print(questions[1][0])
 
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Привет, {update.effective_user.first_name}!  Я твой бот. Чем могу помочь?")
+
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME # говорю что переменная GAME не локальная а глобальная.
@@ -32,9 +34,8 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # await update.message.reply_text(text) # дебаг. вывод того что получил бот.
  
     # Если глобальная переменная GAME стоит в тру то вызываю функцию игра.
-    # передаю туда полученный текст
+    # передаю туда полученный текст и выхожу, чтобы не спамить текстом болталки.
     if GAME:
-        # repl = str(aktivi_game(text))
         await update.message.reply_text(aktivi_game(text))
         return
 
@@ -47,8 +48,11 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif text in [ "что ты умеешь?" , "что ты умеешь"]:
         reply = "я уменю играть в камень ножницы бумага. Если хочешь сыграть нажми (/game)"
     else:
-        reply = "Я пока умею отвечать только на \"привет\" , \"здравствуйте\" , \"как дела?\" , \"как дела\" ,\"пока\" и \"досвидания\""
+        reply = 'Я пока умею отвечать только на "привет", "здравствуйте", "как дела?", \
+"как дела", "пока" и "досвидания"'
+
     await update.message.reply_text(reply)
+
 
 def aktivi_game(text):
     global GAME
@@ -61,12 +65,14 @@ def aktivi_game(text):
     if text == variant:
         GAME = False
         return "Я выбрал " + variant + ". Ничья!"
-    elif (text == "камень" and variant == "ножницы") or (text == "ножницы" and variant == "бумага") or (text == "бумага" and variant == "камень"):
+    elif (text == "камень" and variant == "ножницы") or (text == "ножницы" and variant == "бумага") \
+    or (text == "бумага" and variant == "камень"):
         GAME = False
         return "Я выбрал " + variant + ". Ты победил!"
     else:
         GAME = False
         return "Я выбрал " + variant + ". Ты проиграл!"
+
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # context.user_data['game_igra'] = True # хз зачем это :) .
@@ -91,12 +97,11 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #     else:
     #         result ='Ты проиграл!'
 
-app = ApplicationBuilder().token(TOKEN).build()
 
+app = ApplicationBuilder().token(TOKEN).build()
 # Регистрация обработчиков
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
-
 # Запуск бота
 app.run_polling()
