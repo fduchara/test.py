@@ -64,14 +64,15 @@ def aktivi_game(text):
     variant = random.choice(varianti)
     if text == variant:
         GAME = False
-        return "Я выбрал " + variant + ". Ничья!"
-    elif (text == "камень" and variant == "ножницы") or (text == "ножницы" and variant == "бумага") \
+        return 'Я выбрал "' + variant + '". Ничья!'
+    elif (text == "камень" and variant == "ножницы") \
+    or (text == "ножницы" and variant == "бумага") \
     or (text == "бумага" and variant == "камень"):
         GAME = False
-        return "Я выбрал " + variant + ". Ты победил!"
+        return 'Я выбрал "' + variant + '". Ты победил!'
     else:
         GAME = False
-        return "Я выбрал " + variant + ". Ты проиграл!"
+        return 'Я выбрал "' + variant + '". Ты проиграл!'
 
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
