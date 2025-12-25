@@ -70,7 +70,7 @@ def aktivi_game(text):
         return "Я выбрал " + variant + ". Ты проиграл!"
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    context.user_data['game_igra'] = True
+    # context.user_data['game_igra'] = True # хз зачем это :) .
     await update.message.reply_text('Выбери камень ножницы или бумага')
     global GAME
     GAME = True
@@ -91,6 +91,7 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #         result ='Ты победил!'
     #     else:
     #         result ='Ты проиграл!'
+
 app = ApplicationBuilder().token(TOKEN).build()
 
 # Регистрация обработчиков
