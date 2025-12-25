@@ -8,13 +8,19 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filte
 TOKEN = "8260306943:AAFfchQLrtqoMUW91AJw6xgM3UXIOF7mdww"
 GAME = False
 
-questions = [
-    'Сколько цветов в радуге?\na) пять\nb) восемь\nc) три\nd) семь',
-    'Столица Великобритании?\na) Париж \nb) Москва\nc) Каир\nd) Лондон',
-    'Сколько материков на Земле?\na) семь\nb) пять\nc) шесть\nd) восемь'
-]
-
-correct_answers = ['D', 'D','C']
+# questions = [
+#     [
+#         "Сколько цветов в радуге?\na) пять\nb) восемь\nc) три\nd) семь",
+#         "Столица Великобритании?\na) Париж \nb) Москва\nc) Каир\nd) Лондон",
+#         "Сколько материков на Земле?\na) семь\nb) пять\nc) шесть\nd) восемь"
+#     ],[
+#         "d",
+#         "d",
+#         "c"
+#     ]
+# ]
+# print(questions[0][0])
+# print(questions[1][0])
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f'Привет, {update.effective_user.first_name}!  Я твой бот. Чем могу помочь?')
@@ -85,7 +91,6 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #         result ='Ты победил!'
     #     else:
     #         result ='Ты проиграл!'
-
 app = ApplicationBuilder().token(TOKEN).build()
 
 # Регистрация обработчиков
