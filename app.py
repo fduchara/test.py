@@ -23,12 +23,12 @@ GAME = False
 # print(questions[1][0])
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(f'Привет, {update.effective_user.first_name}!  Я твой бот. Чем могу помочь?')
+    await update.message.reply_text(f"Привет, {update.effective_user.first_name}!  Я твой бот. Чем могу помочь?")
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME # говорю что переменная GAME не локальная а глобальная.
     # убрал update.message.text сделал переменную. 
-    text = update.message.text
+    text = update.message.text.lower()
     # await update.message.reply_text(text) # дебаг. вывод того что получил бот.
  
     # Если глобальная переменная GAME стоит в тру то вызываю функцию игра.
@@ -38,22 +38,21 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text(aktivi_game(text))
         return
 
-    if text.lower() in  ['привет', 'здравствуйте']:
-        await update.message.reply_text(random.choice(['И тебе привет', 'Привет привет']))
-    elif text.lower() in ['как дела?','как дела']:
-        await update.message.reply_text('Всё хорошо, а твои?')
-    elif text.lower() in ['пока' , 'досвидания']:
-        await update.message.reply_text('Пока пока. до скорых втреч!')
-    elif text.lower() in [ 'что ты умеешь?' , 'что ты умеешь']:
-        await update.message.reply_text('я уменю играть в камень ножницы бумага. Если хочешь сыграть нажми (/game)')
+    if text in  ["привет", "здравствуйте"]:
+        reply = (random.choice(["И тебе привет", "Привет привет"]))
+    elif text in ["как дела?","как дела"]:
+        reply = "Всё хорошо, а твои?"
+    elif text in ["пока" , "досвидания"]:
+        reply = "Пока пока. до скорых втреч!"
+    elif text in [ "что ты умеешь?" , "что ты умеешь"]:
+        reply = "я уменю играть в камень ножницы бумага. Если хочешь сыграть нажми (/game)"
     else:
-        await update.message.reply_text(
-            'Я пока умею отвечать только на "привет" , "здравствуйте" , "как дела?" , "как дела" ,"пока" и "досвидания"')
-
+        reply = "Я пока умею отвечать только на \"привет\" , \"здравствуйте\" , \"как дела?\" , \"как дела\" ,\"пока\" и \"досвидания\""
+    await update.message.reply_text(reply)
 
 def aktivi_game(text):
     global GAME
-    varianti = ['камень' , 'ножницы' , 'бумага']
+    varianti = ["камень" , "ножницы" , "бумага"]
     if text not in varianti:
         # в случе ошибки специально не меняю глобальную гейм на фолс. Чтобы не вызывать игру снова.
         return "Ошибка, введите камень ножнцы или бумага"
@@ -71,7 +70,7 @@ def aktivi_game(text):
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # context.user_data['game_igra'] = True # хз зачем это :) .
-    await update.message.reply_text('Выбери камень ножницы или бумага')
+    await update.message.reply_text("Выбери камень ножницы или бумага")
     global GAME
     GAME = True
 
