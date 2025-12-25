@@ -98,6 +98,10 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Выбери камень ножницы или бумага")
     global GAME
     GAME = True
+        
+async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        await update.message.reply_text("Отвечай на вопросы")
+        
 
     # async def aktivi_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #     if not context.user_data.get('game_igra', False):
