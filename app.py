@@ -1,7 +1,7 @@
 #!/bin/python
+import logging # как поняла вместо print(), чтобы видеть ошибки если есть. 
 import random
-from http.cookiejar import user_domain_match
-
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filters, MessageHandler, CallbackContext
 
@@ -32,11 +32,31 @@ questions2 = [
             ["И тебе привет", "Привет привет"],
             ["Всё хорошо, а твои?", "Да не оч. Как то грустно ботом работать :("],
             ["Пока пока. до скорых втреч!", "Бывай", "Проваливай"],
-            ["я умею играть в камень ножницы бумага. Если хочешь сыграть нажми (/game)"]
+            ["я умею играть в камень ножницы бумага. Если хочешь сыграть нажми (/game) и могу запустить викторину, нажми (/viktorina)"]
         ]
     ]
+# насторойка логирования. дата, имя, уровень важности сообщения, текст
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
 
+#меню с кнопками игр
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Sends a message with three inline buttons attached."""
+    keyboard = [
+        
+            InlineKeyboardButton("Камень, ножницы, бумага", callback_data="/game"),
+            InlineKeyboardButton("Викторина", callback_data="/viktorina"),
+        ]
 
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text("Во что хочешь поиграть?", reply_markup=reply_markup)
+#нажатие кнопок в меню
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+         query = update.callback_query
+        
 #         reply = 'Я пока умею отвечать только на "привет", "здравствуйте", "как дела?", \
 # "как дела", "пока" и "досвидания"'
 
@@ -101,6 +121,7 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
 async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("Отвечай на вопросы")
+       questions 
         
 
     # async def aktivi_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
