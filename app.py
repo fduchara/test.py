@@ -43,8 +43,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 #меню с кнопками игр
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Sends a message with three inline buttons attached."""
+async def igri (update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
         
             InlineKeyboardButton("Камень, ножницы, бумага", callback_data="/game"),
