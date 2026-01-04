@@ -8,6 +8,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler,CallbackQueryHandler
 TOKEN = "8260306943:AAFfchQLrtqoMUW91AJw6xgM3UXIOF7mdww"
 GAME = False
 VIKTORINA = False
+VOPROS_INDEX = 0
 
 questions = [
    [
@@ -59,7 +60,7 @@ async def igri (update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 #нажатие кнопок в меню
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
          query = update.callback_query
-        awaint update answer()
+        await update answer()
 if  query.data == "/game":
         await game(updata, context)
 elif qury.data == "/viktorina":
@@ -73,7 +74,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global GAME # говорю что переменная GAME не локальная а глобальная.
+    global GAME, VIKTORINA, VOPROS_INDEX # говорю что переменная GAME не локальная а глобальная.
     # убрал update.message.text сделал переменную. 
     text = update.message.text.lower()
     # await update.message.reply_text(text) # дебаг. эхо вывод того что получил бот.
@@ -86,8 +87,20 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         return
 
     if VIKTORINA:
-            await update.message/reply_text(aktiv_viktorina(text))
-            return
+            otvet = question[1][VOPROS_INDEX]
+       if text == otvet:
+          await update.massage.reply_text("Верно!")
+       else:
+          await update.massage.reply_text(f"Не верно! Правильный ответ:{otvet}")
+
+          VOPROS_INDEX +=1
+          if VOPROS_INDEX > len (question[0]):
+              await update.massage.reply_twxt(question[0][VOPROS_INDEX]
+          else:
+             VIKTORINA = False
+             VOPROS_INDEX = 0
+             await update.message.reply_text("Игра окончена")                               
+         return
 
 
     # смотрю длину массива. Прохожу циклом по вопросам и сравниваю с ответами.
@@ -133,15 +146,9 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
 async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("Отвечай на вопросы")
-        global VIKTORINA
+        global VIKTORINA, OTVET_INDEX
         VIKTORINA = True
-
-
-def aktiv viktorina(text):
-    global VIKTORINA
-if text == 
-       
-        
+        OTVET_INDEX = 0
 
     # async def aktivi_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #     if not context.user_data.get('game_igra', False):
@@ -160,7 +167,7 @@ if text ==
     #     else:
     #         result ='Ты проиграл!'
 
-
+def main():
 app = ApplicationBuilder().token(TOKEN).build()
 # Регистрация обработчиков
 app.add_handler(CommandHandler("start", start))
