@@ -59,18 +59,20 @@ async def igri (update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
 #нажатие кнопок в меню
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-         query = update.callback_query
-        await update answer()
-if  query.data == "/game":
-        await game(updata, context)
-elif qury.data == "/viktorina":
-        await viktorina(update, comtext)
+    query = update.callback_query
+    await query.answer()
+    
+    if  query.data == "/game":
+       await game(update, context)
+   elif query.data == "/viktorina":
+       await viktorina(update, context)
         
 #         reply = 'Я пока умею отвечать только на "привет", "здравствуйте", "как дела?", \
 # "как дела", "пока" и "досвидания"'
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Привет, {update.effective_user.first_name}!  Я твой бот. Чем могу помочь?")
+    await igri(update, context)
 
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -87,20 +89,20 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         return
 
     if VIKTORINA:
-            otvet = question[1][VOPROS_INDEX]
+            otvet = questions[1][VOPROS_INDEX]
        if text == otvet:
-          await update.massage.reply_text("Верно!")
+          await update.message.reply_text("Верно!")
        else:
-          await update.massage.reply_text(f"Не верно! Правильный ответ:{otvet}")
+          await update.message.reply_text(f"Не верно! Правильный ответ:{otvet}")
 
           VOPROS_INDEX +=1
-          if VOPROS_INDEX > len (question[0]):
-              await update.massage.reply_twxt(question[0][VOPROS_INDEX]
-          else:
-             VIKTORINA = False
-             VOPROS_INDEX = 0
+       if VOPROS_INDEX < len (question[0]):
+              await update.message.reply_text(question[0][VOPROS_INDEX])
+      else:
+          VIKTORINA = False
+          VOPROS_INDEX = 0
              await update.message.reply_text("Игра окончена")                               
-         return
+      return
 
 
     # смотрю длину массива. Прохожу циклом по вопросам и сравниваю с ответами.
@@ -145,10 +147,12 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     GAME = True
         
 async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        await update.message.reply_text("Отвечай на вопросы")
-        global VIKTORINA, OTVET_INDEX
+        global VIKTORINA, VOPROS_INDEX
         VIKTORINA = True
         OTVET_INDEX = 0
+
+       await update.message.reply_text("Отвечай на вопросы")
+       await update.message.reply_text(questions[0][VOPROS_INDEX])
 
     # async def aktivi_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #     if not context.user_data.get('game_igra', False):
@@ -167,9 +171,9 @@ async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #     else:
     #         result ='Ты проиграл!'
 
+# Регистрация обработчиков
 def main():
 app = ApplicationBuilder().token(TOKEN).build()
-# Регистрация обработчиков
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(CommandHandler("viktorina", viktorina))
