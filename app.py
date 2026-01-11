@@ -64,7 +64,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     if  query.data == "/game":
        await game(update, context)
-   elif query.data == "/viktorina":
+    elif query.data == "/viktorina":
        await viktorina(update, context)
         
 #         reply = 'Я пока умею отвечать только на "привет", "здравствуйте", "как дела?", \
@@ -97,7 +97,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
           VOPROS_INDEX +=1
        if VOPROS_INDEX < len (question[0]):
-              await update.message.reply_text(question[0][VOPROS_INDEX])
+              await update.message.reply_text(questions[0][VOPROS_INDEX])
       else:
           VIKTORINA = False
           VOPROS_INDEX = 0
