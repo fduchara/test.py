@@ -50,15 +50,18 @@ async def igri (update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
             InlineKeyboardButton("Камень, ножницы, бумага", callback_data="/game"),
             InlineKeyboardButton("Викторина", callback_data="/viktorina"),
-            ]
+            ],
+       [InlineKeyboardButton("Выход.", callback_data="/close")]
         ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
+   
     await update.message.reply_text("Во что хочешь поиграть?", reply_markup=reply_markup)
         
 #нажатие кнопок в меню
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
+   
     await query.answer()
     
     if  query.data == "/game":
