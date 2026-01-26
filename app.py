@@ -95,7 +95,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
           await update.message.reply_text(f"Не верно! Правильный ответ:{otvet}")
 
           VOPROS_INDEX +=1
-       if VOPROS_INDEX < len (question[0]):
+       if VOPROS_INDEX < len (questions[0]):
               await update.message.reply_text(questions[0][VOPROS_INDEX])
       else:
           VIKTORINA = False
