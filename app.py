@@ -2,7 +2,6 @@
 import logging # как поняла вместо print(), чтобы видеть ошибки если есть. 
 import random
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler,CallbackQueryHandler, ContextTypes, filters, MessageHandler, CallbackContext
 
 TOKEN = "8260306943:AAFfchQLrtqoMUW91AJw6xgM3UXIOF7mdww"
@@ -149,7 +148,7 @@ async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         global VIKTORINA, VOPROS_INDEX
         VIKTORINA = True
-        OTVET_INDEX = 0
+        VOPROS_INDEX = 0
 
        await update.message.reply_text("Отвечай на вопросы")
        await update.message.reply_text(questions[0][VOPROS_INDEX])
