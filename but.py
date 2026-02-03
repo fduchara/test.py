@@ -88,11 +88,11 @@ def aktivi_game(text):
 
     if text == variant:
         return  "Ничья! 🤝"
-        elif (text == "камень" and variant == "ножницы") \
-            or (text == "ножницы" and variant == "бумага") \
-            or (text == "бумага" and variant == "камень"):
-                POBEDA_IGROK += 1
-                result = "🥇 Ты победил!"
+    elif (text == "камень" and variant == "ножницы") \
+        or (text == "ножницы" and variant == "бумага") \
+        or (text == "бумага" and variant == "камень"):
+            POBEDA_IGROK += 1
+            result = "🥇 Ты победил!"
     else:
         POBEDA_BOT += 1
         result = "😔 Ты проиграл!"
