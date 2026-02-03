@@ -86,16 +86,27 @@ def aktivi_game(text):
     variant = random.choice(varianti)
     SIGRAN_RAUND += 1
 
+    if text == variant:
+        return  "Ничья! 🤝"
+        elif (text == "камень" and variant == "ножницы") \
+            or (text == "ножницы" and variant == "бумага") \
+            or (text == "бумага" and variant == "камень"):
+                POBEDA_IGROK += 1
+                result = "🥇 Ты победил!"
+    else:
+        POBEDA_BOT += 1
+        result = "😔 Ты проиграл!"
+
     if SIGRAN_RAUND >= MAX_GAMES:
         GAME = False
         if POBEDA_IGROK > POBEDA_BOT:
-            return f'Я выбрал "{variant}". Ты победил! 🥇\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🎉 Ты победил!'
+            return f'Я выбрал "{variant}". Ты победил! 🥇\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🎉 Ты победил!'
         elif POBEDA_IGROK < POBEDA_BOT:
-            return f'Я выбрал "{variant}". Ты проиграл! 😔\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤖 Бот победил!'
+            return f'Я выбрал "{variant}". Ты проиграл! 😔\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤖 Бот победил!'
         else:
-            return f'Я выбрал "{variant}". Ничья! 🤝\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤝 Ничья!'
+            return f'Я выбрал "{variant}". Ничья! 🤝\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤝 Ничья!'
     else:
-        return f'Счёт: ты {POBEDA_IGROK} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}'
+        return f'Счёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}'
 
 
 def aktivi_viktrina(text):
