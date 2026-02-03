@@ -12,7 +12,7 @@ ATTEMPS = 0
 SIGRAN_RAUND = 0  # раунды
 MAX_GAMES = 5     # макс раундов
 POBEDA_BOT = 0    # победа бота
-POBEDA_IGROk = 0  # победа игрока
+POBEDA_IGROK = 0  # победа игрока
 
 questions = [
     [
@@ -55,7 +55,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Привет, {update.effective_user.first_name}! Я твой бот. Чем могу помочь?")
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROk
+    global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
     text = update.message.text.lower()
 
 
@@ -77,7 +77,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await update.message.reply_text(reply)
 
 def aktivi_game(text):
-    global GAME, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROk
+    global GAME, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
     varianti = ["камень", "ножницы", "бумага"]
 
     if text not in varianti:
@@ -88,25 +88,25 @@ def aktivi_game(text):
 
     if SIGRAN_RAUND >= MAX_GAMES:
         GAME = False
-        if POBEDA_IGROk > POBEDA_BOT:
+        if POBEDA_IGROK > POBEDA_BOT:
             return f'Я выбрал "{variant}". Ты победил! 🥇\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🎉 Ты победил!'
-        elif POBEDA_IGROk < POBEDA_BOT:
+        elif POBEDA_IGROK < POBEDA_BOT:
             return f'Я выбрал "{variant}". Ты проиграл! 😔\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤖 Бот победил!'
         else:
             return f'Я выбрал "{variant}". Ничья! 🤝\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤝 Ничья!'
     else:
-        return f'Счёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}'
+        return f'Счёт: ты {POBEDA_IGROK} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}'
 
 
 def aktivi_viktrina(text):
-    global VIKTORINA, VOPROS_INDEX, ATTEMPS
+    global VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
     otvet = questions[1][VOPROS_INDEX]
     max_attempts = 3
 
     if text == otvet:
         VOPROS_INDEX += 1
         ATTEMPS = 0
-        if VOPROS_INDEX < len(questions[0]):
+        if VOPROS_INDEX < len(questions[0]): 
             return questions[0][VOPROS_INDEX]
         else:
             VIKTORINA = False
