@@ -1,0 +1,147 @@
+import logging
+import random
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filters, MessageHandler, CallbackContext
+from telegram import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+
+TOKEN = "8420758526:AAHbHgvanf3pwtASdRA5MI4zkWw_RjtguHE"
+GAME = False
+VIKTORINA = False
+VOPROS_INDEX = 0
+ATTEMPS = 0
+SIGRAN_RAUND = 0  # раунды
+MAX_GAMES = 5     # макс раундов
+POBEDA_BOT = 0    # победа бота
+POBEDA_IGROk = 0  # победа игрока
+
+questions = [
+    [
+        "Самое глубокое озеро в России ?\na) Ладожское\nb) Хантайское\nc) Онежское\nd) Байкал",
+        "Столица Великобритании?\na) Париж \nb) Москва\nc) Каир\nd) Лондон",
+        "Сколько материков на Земле?\na) семь\nb) пять\nc) шесть\nd) восемь",
+        "Сколько морей омывают Россию ?\na) тринадцать \nb) семь\nc) четыре\nd) одиннадцать"
+    ],
+    [
+        "d",
+        "d",
+        "c",
+        "a"
+    ]
+]
+
+questions2 = [
+    [
+        ["привет", "здравствуйте"],
+        ["как дела?", "как дела"],
+        ["пока", "досвидания"],
+        ["расскажи шутку", "шутка", "расскажи анекдот"],
+        ["что ты умеешь?", "что ты умеешь", "что ты умеешь?", "что ты умеешь"]
+    ],
+    [
+        ["И тебе привет 😊", "Привет привет 👋"],
+        ["Всё хорошо 👍", "Да не оч. Как‑то грустно ботом работать :( 😔"],
+        ["Пока‑пока! До скорых встреч! 👋", "Бывай! ✌️", "Проваливай! 😜"],
+        [
+            "Почему у часов нет друзей? Потому что они всё время торопят события!",
+            "Почему компьютер иногда зависает? Он смотрит на ваши попытки разобраться в его ошибках и впадает в ступор.",
+            "Почему дверь скрипит? — Она просто не согласна с вашим выбором.",
+            "Почему кошка спит на клавиатуре? — Она редактирует ваш код ночью."
+        ],
+        ["Я умею играть в «камень‑ножницы‑бумага» ✂️🪨📄! Нажми /game, чтобы сыграть. Или /viktorina — запустить викторину 🏆️. Могу рассказать анекдот"]
+    ]
+]
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text(f"Привет, {update.effective_user.first_name}! Я твой бот. Чем могу помочь?")
+
+async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROk
+    text = update.message.text.lower()
+
+
+    if GAME:
+        await update.message.reply_text(aktivi_game(text))
+        return
+
+    if VIKTORINA:
+        await update.message.reply_text(aktivi_viktrina(text))
+        return
+
+    reply = 'Я пока не умею отвечать на такое.'
+    for i in range(0, len(questions2[0])):
+        if text in questions2[0][i]:
+            if len(questions2[0][i]) == 0:
+                reply = questions2[1][i]
+            else:
+                reply = random.choice(questions2[1][i])
+    await update.message.reply_text(reply)
+
+def aktivi_game(text):
+    global GAME, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROk
+    varianti = ["камень", "ножницы", "бумага"]
+
+    if text not in varianti:
+        return "❌ Ошибка, введите камень, ножницы или бумагу"
+
+    variant = random.choice(varianti)
+    SIGRAN_RAUND += 1
+
+    if SIGRAN_RAUND >= MAX_GAMES:
+        GAME = False
+        if POBEDA_IGROk > POBEDA_BOT:
+            return f'Я выбрал "{variant}". Ты победил! 🥇\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🎉 Ты победил!'
+        elif POBEDA_IGROk < POBEDA_BOT:
+            return f'Я выбрал "{variant}". Ты проиграл! 😔\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤖 Бот победил!'
+        else:
+            return f'Я выбрал "{variant}". Ничья! 🤝\nСчёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤝 Ничья!'
+    else:
+        return f'Счёт: ты {POBEDA_IGROk} — бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}'
+
+
+def aktivi_viktrina(text):
+    global VIKTORINA, VOPROS_INDEX, ATTEMPS
+    otvet = questions[1][VOPROS_INDEX]
+    max_attempts = 3
+
+    if text == otvet:
+        VOPROS_INDEX += 1
+        ATTEMPS = 0
+        if VOPROS_INDEX < len(questions[0]):
+            return questions[0][VOPROS_INDEX]
+        else:
+            VIKTORINA = False
+            VOPROS_INDEX = 0
+            ATTEMPS = 0
+            return "🎉 Викторина завершена!"
+    else:
+        ATTEMPS += 1
+        remaining = max_attempts - ATTEMPS
+        if remaining > 0:
+            return f"❌ Неверно! Осталось {remaining} попыток"
+        else:
+            VIKTORINA = False
+            return "Попытки исчерпаны. Программа завершена."
+
+async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("Выбери камень, ножницы или бумагу")
+    global GAME, SIGRAN_RAUND, POBEDA_BOT, POBEDA_IGROk
+    GAME = True
+    SIGRAN_RAUND = 0
+    POBEDA_BOT = 0
+    POBEDA_IGROk = 0
+
+async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    global VIKTORINA, VOPROS_INDEX, ATTEMPS
+    VIKTORINA = True
+    VOPROS_INDEX = 0
+    ATTEMPS = 0
+    await update.message.reply_text("Я буду задавать вопросы с вариантами ответа. Отвечай только буквой. У тебя будет 3 попытки на ответ.")
+    await update.message.reply_text(questions[0][VOPROS_INDEX])
+
+app = ApplicationBuilder().token(TOKEN).build()
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("game", game))
+app.add_handler(CommandHandler("viktorina", viktorina))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
+
+app.run_polling()
