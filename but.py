@@ -92,10 +92,10 @@ def aktivi_game(text):
         or (text == "ножницы" and variant == "бумага") \
         or (text == "бумага" and variant == "камень"):
             POBEDA_IGROK += 1
-            result = "🥇 Ты победил!"
+            return"🥇 Ты победил!"
     else:
         POBEDA_BOT += 1
-        result = "😔 Ты проиграл!"
+        return"😔 Ты проиграл!"
 
     if SIGRAN_RAUND >= MAX_GAMES:
         GAME = False
