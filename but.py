@@ -135,11 +135,11 @@ def aktivi_viktrina(text):
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Выбери камень, ножницы или бумагу")
-    global GAME, SIGRAN_RAUND, POBEDA_BOT, POBEDA_IGROk
+    global GAME, SIGRAN_RAUND, POBEDA_BOT, POBEDA_IGROK
     GAME = True
     SIGRAN_RAUND = 0
     POBEDA_BOT = 0
-    POBEDA_IGROk = 0
+    POBEDA_IGROK = 0
 
 async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global VIKTORINA, VOPROS_INDEX, ATTEMPS
