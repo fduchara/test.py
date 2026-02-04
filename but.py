@@ -2,7 +2,7 @@ import logging
 import random
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filters, MessageHandler, CallbackContext
-from telegram import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup
 
 TOKEN = "8420758526:AAHbHgvanf3pwtASdRA5MI4zkWw_RjtguHE"
 GAME = False
@@ -36,10 +36,12 @@ questions2 = [
         ["пока", "досвидания"],
         ["расскажи шутку", "шутка", "расскажи анекдот"],
         ["что ты умеешь?", "что ты умеешь", "что ты умеешь?", "что ты умеешь"]
+        ["плохо", "грустно"]
+        ["весело","хорошо"]
     ],
     [
         ["И тебе привет 😊", "Привет привет 👋"],
-        ["Всё хорошо 👍", "Да не оч. Как‑то грустно ботом работать :( 😔"],
+        ["Всё хорошо, а твои? 👍", "Да не оч. Как‑то грустно ботом работать :( 😔"],
         ["Пока‑пока! До скорых встреч! 👋", "Бывай! ✌️", "Проваливай! 😜"],
         [
             "Почему у часов нет друзей? Потому что они всё время торопят события!",
@@ -48,11 +50,23 @@ questions2 = [
             "Почему кошка спит на клавиатуре? — Она редактирует ваш код ночью."
         ],
         ["Я умею играть в «камень‑ножницы‑бумага» ✂️🪨📄! Нажми /game, чтобы сыграть. Или /viktorina — запустить викторину 🏆️. Могу рассказать анекдот"]
+        ["Не грусти, держи подарок","Хочу поднять тебе настроение и рассказать шутку, просто напиши мне 'шутка'"]
+        ["Рад, что у тебя всё хорошо", "если у тебя всё хорошо, то и у меня тоже"]
     ]
 ]
 
+# кнопки
+keyboard = [
+    ["камень", "ножницы", "бумага"],
+    ["викторина", "игра"],
+    ["стоп"]
+]
+# клавиатура
+reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
+#подключила клавиатуру
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(f"Привет, {update.effective_user.first_name}! Я твой бот. Чем могу помочь?")
+    await update.message.reply_text(f"Привет, {update.effective_user.first_name}! Я твой бот. Чем могу помочь?" reply_markup=reply_markup) 
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
@@ -110,7 +124,7 @@ def aktivi_game(text):
 
 
 def aktivi_viktrina(text):
-    global VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
+    global VIKTORINA, VOPROS_INDEX, ATTEMPS
     otvet = questions[1][VOPROS_INDEX]
     max_attempts = 3
 
