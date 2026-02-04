@@ -87,15 +87,15 @@ def aktivi_game(text):
     SIGRAN_RAUND += 1
 
     if text == variant:
-        return  "Ничья! 🤝"
+       result ="Ничья! 🤝"
     elif (text == "камень" and variant == "ножницы") \
         or (text == "ножницы" and variant == "бумага") \
         or (text == "бумага" and variant == "камень"):
             POBEDA_IGROK += 1
-            return"🥇 Ты победил!"
+            result ="🥇 Ты победил!"
     else:
         POBEDA_BOT += 1
-        return"😔 Ты проиграл!"
+        result = "😔 Ты проиграл!"
 
     if SIGRAN_RAUND >= MAX_GAMES:
         GAME = False
@@ -106,7 +106,7 @@ def aktivi_game(text):
         else:
             return f'Я выбрал "{variant}". Ничья! 🤝\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤝 Ничья!'
     else:
-        return f'Счёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}'
+        return (f'{result} Счёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}')
 
 
 def aktivi_viktrina(text):
