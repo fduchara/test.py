@@ -134,7 +134,7 @@ def aktivi_viktrina(text):
             return "Попытки исчерпаны. Программа завершена."
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Выбери камень, ножницы или бумагу")
+    await update.message.reply_text("Выбери камень, ножницы или бумагу. У нас будет 5 раундов.")
     global GAME, SIGRAN_RAUND, POBEDA_BOT, POBEDA_IGROK
     GAME = True
     SIGRAN_RAUND = 0
