@@ -69,7 +69,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         f"Привет, {update.effective_user.first_name}! Я твой бот. Чем могу помочь?",
         reply_markup=reply_markup
-    ) 
+    )
+
+async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
