@@ -71,8 +71,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_markup=reply_markup
     )
 
-async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
-
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
     text = update.message.text.lower()
@@ -151,6 +149,28 @@ def aktivi_viktrina(text):
         else:
             VIKTORINA = False
             return "Попытки исчерпаны. Программа завершена."
+
+async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
+    text = update.message.text.lower()
+    if text == " стоп"
+    global GAME, VIKTORINA
+    GAME = false
+    VIKTORINA = false
+    await update.message.reply_text( "Программа остановлена. пока)")
+    return
+
+if GAME:
+    atvet = aktivi_game(text) 
+    await update.message.reply_text(atvet)
+    return
+
+if VIKTORINA:
+    atvet  = aktivi_viktrina(text) 
+    await update.message.reply_text(atvwt)
+    reyurn
+
+await greet_if_hello(update, context) 
+                
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Выбери камень, ножницы или бумагу. У нас будет 5 раундов.")
