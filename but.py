@@ -175,8 +175,7 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
     if text == "игра":
         await game(update, context)
         return
-
-    if text == "викторина":
+    elif text == "викторина":
         await viktorina(update, context)
         return
 
@@ -204,5 +203,5 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(CommandHandler("viktorina", viktorina))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
-
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
 app.run_polling()
