@@ -14,6 +14,8 @@ MAX_GAMES = 5     # макс раундов
 POBEDA_BOT = 0    # победа бота
 POBEDA_IGROK = 0  # победа игрока
 
+logging.basicConfig(level=logging.INFO)
+
 questions = [
     [
         "Самое глубокое озеро в России ?\na) Ладожское\nb) Хантайское\nc) Онежское\nd) Байкал",
@@ -152,7 +154,7 @@ def aktivi_viktrina(text):
 
 async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
     text = update.message.text.lower()
-    if text == " стоп"
+    if text == "стоп"
     global GAME, VIKTORINA
     GAME = false
     VIKTORINA = false
@@ -166,8 +168,16 @@ if GAME:
 
 if VIKTORINA:
     atvet  = aktivi_viktrina(text) 
-    await update.message.reply_text(atvwt)
+    await update.message.reply_text(atvet)
     reyurn
+
+if text == "игра":
+    await game(update, context)
+    return
+
+if text == "викторина":
+    await viktorina(update, context)
+    return
 
 await greet_if_hello(update, context) 
                 
