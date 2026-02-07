@@ -154,32 +154,33 @@ def aktivi_viktrina(text):
 
 async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
     text = update.message.text.lower()
-    if text == "стоп"
-    global GAME, VIKTORINA
-    GAME = false
-    VIKTORINA = false
-    await update.message.reply_text( "Программа остановлена. пока)")
-    return
+    
+    if text == "стоп":
+        global GAME, VIKTORINA
+        GAME = False
+        VIKTORINA = False
+        await update.message.reply_text( "Программа остановлена. пока)")
+        return
 
-if GAME:
-    atvet = aktivi_game(text) 
-    await update.message.reply_text(atvet)
-    return
+    if GAME:
+        atvet = aktivi_game(text) 
+        await update.message.reply_text(atvet)
+        return
 
-if VIKTORINA:
-    atvet  = aktivi_viktrina(text) 
-    await update.message.reply_text(atvet)
-    reyurn
+    if VIKTORINA:
+        atvet  = aktivi_viktrina(text) 
+        await update.message.reply_text(atvet)
+        reyurn
 
-if text == "игра":
-    await game(update, context)
-    return
+    if text == "игра":
+        await game(update, context)
+        return
 
-if text == "викторина":
-    await viktorina(update, context)
-    return
+    if text == "викторина":
+        await viktorina(update, context)
+        return
 
-await greet_if_hello(update, context) 
+    await greet_if_hello(update, context) 
                 
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
