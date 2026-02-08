@@ -52,19 +52,35 @@ questions2 = [
             "Почему кошка спит на клавиатуре? — Она редактирует ваш код ночью."
         ],
         ["Я умею играть в «камень‑ножницы‑бумага» ✂️🪨📄! Нажми /game, чтобы сыграть. Или /viktorina — запустить викторину 🏆️. Могу рассказать анекдот"],
-        ["Не грусти, держи подарок","Хочу поднять тебе настроение и рассказать шутку, просто напиши мне 'шутка'"],
+        ["Не грусти, держи подарок🎁","Хочу поднять тебе настроение и рассказать шутку, просто напиши мне 'шутка'"],
         ["Рад, что у тебя всё хорошо", "если у тебя всё хорошо, то и у меня тоже"]
     ]
 ]
 
 # кнопки
 keyboard = [
-    ["камень", "ножницы", "бумага"],
     ["викторина", "игра"],
-    ["стоп"]
 ]
 # клавиатура
 reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
+game_keyboard = [
+    ["камень", "ножницы", "бумага"],
+    ["стоп"]
+    ]
+
+# клавиатура
+game_markup = ReplyKeyboardMarkup(game_keyboard, resize_keyboard=True)
+
+# кнопки
+viktrina_keyboard = [
+    ["A", "B", "C", "D"],
+    ["стоп"]
+]
+# клавиатура
+reply_markup = ReplyKeyboardMarkup(viktrina_keyboard, resize_keyboard=True)
+
+
 
 #подключила клавиатуру
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -183,7 +199,10 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
                 
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Выбери камень, ножницы или бумагу. У нас будет 5 раундов.")
+    await update.message.reply_text(
+        "Выбери камень, ножницы или бумагу. У нас будет 5 раундов.",
+             reply_markup = game_markup
+    )
     global GAME, SIGRAN_RAUND, POBEDA_BOT, POBEDA_IGROK
     GAME = True
     SIGRAN_RAUND = 0
@@ -195,13 +214,17 @@ async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     VIKTORINA = True
     VOPROS_INDEX = 0
     ATTEMPS = 0
-    await update.message.reply_text("Я буду задавать вопросы с вариантами ответа. Отвечай только буквой. У тебя будет 3 попытки на ответ.")
+    await update.message.reply_text(
+        "Я буду задавать вопросы с вариантами ответа. Отвечай только буквой. У тебя будет 3 попытки на ответ.",
+    reply_markup = viktrina_markup
+    )
     await update.message.reply_text(questions[0][VOPROS_INDEX])
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("game", game))
-app.add_handler(CommandHandler("viktorina", viktorina))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
+app.add_handler(CommandHandler("game", game))
+app.add_handler(CommandHandler("viktorina", viktorina))
 app.run_polling()
