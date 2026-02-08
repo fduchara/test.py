@@ -78,7 +78,7 @@ viktrina_keyboard = [
     ["стоп"]
 ]
 # клавиатура
-reply_markup = ReplyKeyboardMarkup(viktrina_keyboard, resize_keyboard=True)
+viktrina_markup = ReplyKeyboardMarkup(viktrina_keyboard, resize_keyboard=True)
 
 
 
@@ -216,7 +216,7 @@ async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ATTEMPS = 0
     await update.message.reply_text(
         "Я буду задавать вопросы с вариантами ответа. Отвечай только буквой. У тебя будет 3 попытки на ответ.",
-    reply_markup = viktrina_markup
+            reply_markup = viktrina_markup
     )
     await update.message.reply_text(questions[0][VOPROS_INDEX])
 
