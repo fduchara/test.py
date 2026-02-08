@@ -186,7 +186,7 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
     if VIKTORINA:
         atvet  = aktivi_viktrina(text) 
         await update.message.reply_text(atvet)
-        reyurn
+        return
 
     if text == "игра":
         await game(update, context)
