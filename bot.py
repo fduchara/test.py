@@ -2,7 +2,7 @@ import logging
 import random
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filters, MessageHandler, CallbackContext
-from telegram import ReplyKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 TOKEN = "8420758526:AAHbHgvanf3pwtASdRA5MI4zkWw_RjtguHE"
 GAME = False
@@ -182,12 +182,23 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
         global GAME, VIKTORINA
         GAME = False
         VIKTORINA = False
-        await update.message.reply_text( "Программа остановлена. пока)")
+        await update.message.reply_text( 
+            "Программа остановлена. пока",
+              # reply_markup=ReplyKeyboardRemove() клава просто убирается после стопа
+            reply_markup=reply_markup #клава возраается к первоначальному этапу
+        )
         return
 
     if GAME:
         atvet = aktivi_game(text) 
-        await update.message.reply_text(atvet)
+           await update.message.reply_text(
+            "думаю...",                         #отправляет это сообение и на секунду убирает клаву
+            reply_markup=ReplyKeyboardRemove()   #тут он ее убирает, смторится нк очень
+        )
+        await update.message.reply_text(
+            atvet,                        
+            reply_markup=game_markup        #возвраает
+        )
         return
 
     if VIKTORINA:
@@ -231,7 +242,6 @@ app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(CommandHandler("viktorina", viktorina))
 app.run_polling()
