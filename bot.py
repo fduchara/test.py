@@ -87,6 +87,13 @@ viktrina_keyboard = [
 # клавиатура
 viktrina_markup = ReplyKeyboardMarkup(viktrina_keyboard, resize_keyboard=True)
 
+line_keyboard = [
+    [InlineKeyboardButton("имя", callback_data="name")],
+    [InlineKeyboardButton("возраст", callback_data="age")],
+    [InlineKeyboardButton("город", callback_data="address")]
+    ]
+reply_markup_line = InlineKeyboardMarkup(line_keyboard)
+
 
 
 #подключила клавиатуру
@@ -94,6 +101,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         f"Привет, {update.effective_user.first_name}! Я твой бот. Чем могу помочь?",
         reply_markup=reply_markup
+    )
+    await update.message.reply_text(
+        "давай знакомиться",
+        reply_markup=reply_markup_line
     )
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -177,6 +188,36 @@ def aktivi_viktrina(text):
 
 async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
     text = update.message.text.lower()
+
+        if text in ["A", "B", "C", "D"]:
+        await update.message.reply_text(
+            f"Вы выбрали {text}",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return
+            user = update.message.text
+    dannie = context.user_data.get  # получает данные от пользователя, get метод получения значения
+    if dannie('ozhidanie_otveta') == 'name':
+        context.user_data['ozhidanie_otveta'] = None
+        await update.message.reply_text(
+            f"приятно познакомиться, {user}! а я просто бот и у меня пока нет имени"
+        )
+        await update.message.reply_text("продолжим знакомсво",
+                                        reply_markup=reply_markup_line
+                                        )
+    elif dannie('ozhidanie_otveta') == 'age':
+        context.user_data['ozhidanie_otveta'] = None
+        await update.message.reply_text(f"понял, тебе {user}",
+                                        reply_markup=reply_markup_line
+                                        )
+
+    elif dannie('ozhidanie_otveta') == 'address':
+        context.user_data['ozhidanie_otveta'] = None
+        await update.message.reply_text(f"{user} - хороший город.",
+                                        reply_markup=None)
+return
+
+    
     
     if text == "стоп":
         global GAME, VIKTORINA
@@ -214,6 +255,32 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
         return
 
     await greet_if_hello(update, context) 
+
+async def line_button(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    text = query.data
+    await query.answer()
+
+    if text == "name":
+        await query.edit_message_text(text="как тебя зовут?",
+                                      reply_markup=None
+                                      )
+        # сохраняем состояние и ждем ввода пользоваеля
+        context.user_data['ozhidanie_otveta'] = 'name'
+
+
+    elif text == "age":
+        await query.edit_message_text(text="сколько тебе лет?",
+                                      reply_markup=None
+                                      )
+        context.user_data['ozhidanie_otveta'] = 'age'
+
+    elif text == "address":
+        await query.edit_message_text(text="где ты живешь?",
+                                      reply_markup=None
+                                      )
+        context.user_data['ozhidanie_otveta'] = 'address'
+
                 
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
