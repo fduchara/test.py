@@ -2,7 +2,7 @@ import logging
 import random
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filters, MessageHandler, CallbackContext
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
-
+from telegram.ext import CallbackQueryHandler    # импорт для регестрачии обработчика хандлер для лайн кнопок
 TOKEN = "8420758526:AAHbHgvanf3pwtASdRA5MI4zkWw_RjtguHE"
 GAME = False
 VIKTORINA = False
@@ -139,24 +139,24 @@ def aktivi_game(text):
     SIGRAN_RAUND += 1
 
     if text == variant:
-       result ="Ничья! 🤝"
+       result = f"Я быбрал '{variant}'Ничья! 🤝"
     elif (text == "камень" and variant == "ножницы") \
         or (text == "ножницы" and variant == "бумага") \
         or (text == "бумага" and variant == "камень"):
             POBEDA_IGROK += 1
-            result ="🥇 Ты победил!"
+            result = f"Я выбрал '{variant}' 🥇 Ты победил!"
     else:
         POBEDA_BOT += 1
-        result = "😔 Ты проиграл!"
+        result = f"Я выбрал '{variant}' 😔 Ты проиграл!"
 
     if SIGRAN_RAUND >= MAX_GAMES:
         GAME = False
         if POBEDA_IGROK > POBEDA_BOT:
-            return f'Я выбрал "{variant}". Ты победил! 🥇\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🎉 Ты победил!'
+            return f"Я выбрал '{variant}'. Ты победил! 🥇\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🎉 Ты победил!"
         elif POBEDA_IGROK < POBEDA_BOT:
-            return f'Я выбрал "{variant}". Ты проиграл! 😔\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤖 Бот победил!'
+            return f"Я выбрал '{variant}'. Ты проиграл! 😔\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤖 Бот победил!"
         else:
-            return f'Я выбрал "{variant}". Ничья! 🤝\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤝 Ничья!'
+            return f"Я выбрал '{variant}'. Ничья! 🤝\nСчёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}\n🤝 Ничья!"
     else:
         return (f'{result} Счёт: ты {POBEDA_IGROK}, бот {POBEDA_BOT}. Раундов: {SIGRAN_RAUND}/{MAX_GAMES}')
 
@@ -238,7 +238,7 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
         atvet  = aktivi_viktrina(text) 
         await update.message.reply_text(
             atvet,
-        reply_makup_viktorina_makup
+            reply_markup=viktrina_markup
         )
         return
 
@@ -302,9 +302,9 @@ async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, line_button))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(CommandHandler("viktorina", viktorina))
+app.add_handler(CallbackQueryHandler(line_button))   # этот обработчик обрабатывает именно нажатие лайн кнопок, поблема в том что срабатывает ее дефолтный ответ
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
 app.run_polling()
