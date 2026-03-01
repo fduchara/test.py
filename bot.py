@@ -193,10 +193,10 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
             f"Вы выбрали {text}",
             reply_markup=ReplyKeyboardRemove()
            )
-    return
+        return
     user = update.message.text
-    dannie = context.user_data.get  # получает данные от пользователя, get метод получения значения
-    if dannie('ozhidanie_otveta') == 'name':
+    dannie = context.user_data.get('ozhidanie_otveta')  # получает данные от пользователя, get метод получения значения
+    if dannie == 'name':
         context.user_data['ozhidanie_otveta'] = None
         await update.message.reply_text(
             f"приятно познакомиться, {user}! а я просто бот и у меня пока нет имени"
@@ -204,13 +204,13 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
         await update.message.reply_text("продолжим знакомсво",
                                         reply_markup=reply_markup_line
                                         )
-    elif dannie('ozhidanie_otveta') == 'age':
+    elif dannie == 'age':
         context.user_data['ozhidanie_otveta'] = None
         await update.message.reply_text(f"понял, тебе {user}",
                                         reply_markup=reply_markup_line
                                         )
 
-    elif dannie('ozhidanie_otveta') == 'address':
+    elif dannie == 'address':
         context.user_data['ozhidanie_otveta'] = None
         await update.message.reply_text(f"{user} - хороший город.",
                                         reply_markup=None)
@@ -229,19 +229,18 @@ async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) 
 
     if GAME:
         atvet = aktivi_game(text) 
-           await update.message.reply_text(
-            "думаю...",                         #отправляет это сообение и на секунду убирает клаву
-            reply_markup=ReplyKeyboardRemove()   #тут он ее убирает, смторится нк очень
-        )
         await update.message.reply_text(
             atvet,                        
-            reply_markup=game_markup        #возвраает
+            reply_markup=game_markup        
         )
         return
 
     if VIKTORINA:
         atvet  = aktivi_viktrina(text) 
-        await update.message.reply_text(atvet)
+        await update.message.reply_text(
+            atvet,
+        reply_makup_viktorina_makup
+        )
         return
 
     if text == "игра":
