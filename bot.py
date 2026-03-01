@@ -2,7 +2,7 @@ import logging
 import random
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filters, MessageHandler, CallbackContext
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 TOKEN = "8420758526:AAHbHgvanf3pwtASdRA5MI4zkWw_RjtguHE"
 GAME = False
@@ -304,6 +304,7 @@ async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, line_buttons))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(CommandHandler("viktorina", viktorina))
