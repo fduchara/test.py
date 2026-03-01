@@ -189,13 +189,13 @@ def aktivi_viktrina(text):
 async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
     text = update.message.text.lower()
 
-        if text in ["A", "B", "C", "D"]:
+    if text in ["A", "B", "C", "D"]:
         await update.message.reply_text(
             f"Вы выбрали {text}",
             reply_markup=ReplyKeyboardRemove()
-        )
+           )
         return
-            user = update.message.text
+    user = update.message.text
     dannie = context.user_data.get  # получает данные от пользователя, get метод получения значения
     if dannie('ozhidanie_otveta') == 'name':
         context.user_data['ozhidanie_otveta'] = None
