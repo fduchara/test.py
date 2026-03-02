@@ -108,25 +108,71 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
-    text = update.message.text.lower()
+    text = update.message.text
+    dannie = context.user_data.get('ozhidanie_otveta')  # получает данные от пользователя, get метод получения значения
+    if dannie:
+        if dannie == 'name':
+            context.user_data['ozhidanie_otveta'] = False
+            await update.message.reply_text(
+                f"приятно познакомиться, {text}! а я просто бот и у меня пока нет имени"
+            )
+            await update.message.reply_text("продолжим знакомсво",
+                                            reply_markup=reply_markup_line
+                                            )
+            return
+        elif dannie == 'age':
+            context.user_data['ozhidanie_otveta'] = False
+            await update.message.reply_text(f"понял, тебе {text}",
+                                            reply_markup=reply_markup_line
+                                            )
+            return
 
+        elif dannie == 'address':
+            context.user_data['ozhidanie_otveta'] = False
+            await update.message.reply_text(f"{text} - хороший город.",
+                                            reply_markup=None)
+            return
+
+    if text == "стоп":
+        GAME = False
+        VIKTORINA = False
+        await update.message.reply_text(
+            "Программа остановлена. пока",
+            # reply_markup=ReplyKeyboardRemove() клава просто убирается после стопа
+            reply_markup=reply_markup  # клава возраается к первоначальному этапу
+        )
+        return
 
     if GAME:
-        await update.message.reply_text(aktivi_game(text))
+        await update.message.reply_text(aktivi_game(text),reply_markup=game_markup)
         return
 
     if VIKTORINA:
-        await update.message.reply_text(aktivi_viktrina(text))
+        await update.message.reply_text(aktivi_viktrina(text), reply_markup=viktrina_markup)
         return
 
-    reply = 'Я пока не умею отвечать на такое.'
-    for i in range(0, len(questions2[0])):
-        if text in questions2[0][i]:
-            if len(questions2[0][i]) == 0:
-                reply = questions2[1][i]
-            else:
-                reply = random.choice(questions2[1][i])
-    await update.message.reply_text(reply)
+    if text == "игра":
+        await game(update, context)
+        return
+    elif text == "викторина":
+        await viktorina(update, context)
+        return
+
+    await greet_if_hello(update, context)
+    return
+
+reply = 'Я пока не умею отвечать на такое.'
+for i in range(0, len(questions2[0])):
+    if text in questions2[0][i]:
+        if len(questions2[0][i]) == 0:
+            reply = questions2[1][i]
+        else:
+            reply = random.choice(questions2[1][i])
+            break
+await update.message.reply_text(reply)
+
+
+
 
 def aktivi_game(text):
     global GAME, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
@@ -185,66 +231,6 @@ def aktivi_viktrina(text):
             VIKTORINA = False
             return "Попытки исчерпаны. Программа завершена."
 
-async def handle_buttons(update: Update, context: CallbackContext.DEFAULT_TYPE) -> None:
-    text = update.message.text.lower()
-    user = update.message.text
-    dannie = context.user_data.get('ozhidanie_otveta')  # получает данные от пользователя, get метод получения значения
-    if dannie == 'name':
-        context.user_data['ozhidanie_otveta'] = None
-        await update.message.reply_text(
-            f"приятно познакомиться, {user}! а я просто бот и у меня пока нет имени"
-        )
-        await update.message.reply_text("продолжим знакомсво",
-                                        reply_markup=reply_markup_line
-                                        )
-    elif dannie == 'age':
-        context.user_data['ozhidanie_otveta'] = None
-        await update.message.reply_text(f"понял, тебе {user}",
-                                        reply_markup=reply_markup_line
-                                        )
-
-    elif dannie == 'address':
-        context.user_data['ozhidanie_otveta'] = None
-        await update.message.reply_text(f"{user} - хороший город.",
-                                        reply_markup=None)
-        return
-
-    if text == "стоп":
-        global GAME, VIKTORINA
-        GAME = False
-        VIKTORINA = False
-        await update.message.reply_text( 
-            "Программа остановлена. пока",
-              # reply_markup=ReplyKeyboardRemove() клава просто убирается после стопа
-            reply_markup=reply_markup #клава возраается к первоначальному этапу
-        )
-        return
-
-    if GAME:
-        atvet = aktivi_game(text) 
-        await update.message.reply_text(
-            atvet,                        
-            reply_markup=game_markup        
-        )
-        return
-
-    if VIKTORINA:
-        atvet  = aktivi_viktrina(text) 
-        await update.message.reply_text(
-            atvet,
-            reply_markup=viktrina_markup
-        )
-        return
-
-    if text == "игра":
-        await game(update, context)
-        return
-    elif text == "викторина":
-        await viktorina(update, context)
-        return
-
-    await greet_if_hello(update, context) 
-
 async def line_button(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     text = query.data
@@ -299,6 +285,5 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(CommandHandler("viktorina", viktorina))
 app.add_handler(CallbackQueryHandler(line_button))   # этот обработчик обрабатывает именно нажатие лайн кнопок, поблема в том что срабатывает ее дефолтный ответ
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_buttons))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
 app.run_polling()
