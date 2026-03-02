@@ -108,8 +108,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
-    text = update.message.text
+    text = update.message.text.lower()
     dannie = context.user_data.get('ozhidanie_otveta')  # получает данные от пользователя, get метод получения значения
+    reply = 'Я пока не умею отвечать на такое.'
+
     if dannie:
         if dannie == 'name':
             context.user_data['ozhidanie_otveta'] = False
@@ -120,6 +122,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                                             reply_markup=reply_markup_line
                                             )
             return
+
         elif dannie == 'age':
             context.user_data['ozhidanie_otveta'] = False
             await update.message.reply_text(f"понял, тебе {text}",
@@ -158,20 +161,11 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await viktorina(update, context)
         return
 
-    await greet_if_hello(update, context)
-    return
-
-reply = 'Я пока не умею отвечать на такое.'
-for i in range(0, len(questions2[0])):
-    if text in questions2[0][i]:
-        if len(questions2[0][i]) == 0:
-            reply = questions2[1][i]
-        else:
+    for i in range(len(questions2[0])):
+        if text in questions2[0][i] and questions2[1][i]:
             reply = random.choice(questions2[1][i])
             break
-await update.message.reply_text(reply)
-
-
+    await update.message.reply_text(reply)
 
 
 def aktivi_game(text):
