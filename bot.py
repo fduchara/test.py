@@ -1,16 +1,19 @@
 import logging
 import random
+import asyncio
+from datetime import datetime
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, filters, MessageHandler, CallbackContext
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import CallbackQueryHandler    # импорт для регестрачии обработчика хандлер для лайн кнопок
+from telegram.ext import CallbackQueryHandler  # импорт для регестрации обработчика хандлер для лайн кнопок
+
 TOKEN = "8420758526:AAHbHgvanf3pwtASdRA5MI4zkWw_RjtguHE"
 GAME = False
 VIKTORINA = False
 VOPROS_INDEX = 0
 ATTEMPS = 0
 SIGRAN_RAUND = 0  # раунды
-MAX_GAMES = 5     # макс раундов
-POBEDA_BOT = 0    # победа бота
+MAX_GAMES = 5  # макс раундов
+POBEDA_BOT = 0  # победа бота
 POBEDA_IGROK = 0  # победа игрока
 
 logging.basicConfig(level=logging.INFO)
@@ -27,15 +30,15 @@ questions = [
         "Какой газ преобладает в атмосфере Земли?\na) Кислород\nb) Азот\nc) Углекислый газ\nd) Водород"
     ],
     [
-        "b",  
-        "c",  
-        "a",  
-        "d",  
-        "c",  
-        "c",  
-        "b",  
-        "b"   
-]
+        "b",
+        "c",
+        "a",
+        "d",
+        "c",
+        "c",
+        "b",
+        "b"
+    ]
 ]
 questions2 = [
     [
@@ -45,7 +48,7 @@ questions2 = [
         ["расскажи шутку", "шутка", "расскажи анекдот"],
         ["что ты умеешь?", "что ты умеешь", "что ты умеешь?", "что ты умеешь"],
         ["плохо", "грустно"],
-        ["весело","хорошо"]
+        ["весело", "хорошо"]
     ],
     [
         ["И тебе привет 😊", "Привет привет 👋"],
@@ -57,8 +60,12 @@ questions2 = [
             "Почему дверь скрипит? — Она просто не согласна с вашим выбором.",
             "Почему кошка спит на клавиатуре? — Она редактирует ваш код ночью."
         ],
-        ["Я умею играть в «камень‑ножницы‑бумага» ✂️🪨📄! Нажми /game, чтобы сыграть. Или /viktorina — запустить викторину 🏆️. Могу рассказать анекдот"],
-        ["Не грусти, держи подарок🎁","Хочу поднять тебе настроение и рассказать шутку, просто напиши мне 'шутка'"],
+        [
+            "Я умею играть в «камень‑ножницы‑бумага» ✂️🪨📄! Нажми /game, чтобы сыграть.\n"
+            "Или /viktorina — запустить викторину 🏆️. Могу рассказать анекдот.\n"
+            "Ещё могу поставить напоминание — нажми /reminder 🔔"
+        ],
+        ["Не грусти, держи подарок🎁", "Хочу поднять тебе настроение и рассказать шутку, просто напиши мне 'шутка'"],
         ["Рад, что у тебя всё хорошо", "если у тебя всё хорошо, то и у меня тоже"]
     ]
 ]
@@ -73,29 +80,23 @@ reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 game_keyboard = [
     ["камень", "ножницы", "бумага"],
     ["стоп"]
-    ]
-
-# клавиатура
+]
 game_markup = ReplyKeyboardMarkup(game_keyboard, resize_keyboard=True)
 
-# кнопки
 viktrina_keyboard = [
     ["A", "B", "C", "D"],
     ["стоп"]
 ]
-# клавиатура
 viktrina_markup = ReplyKeyboardMarkup(viktrina_keyboard, resize_keyboard=True)
 
 line_keyboard = [
     [InlineKeyboardButton("имя", callback_data="name")],
     [InlineKeyboardButton("возраст", callback_data="age")],
     [InlineKeyboardButton("город", callback_data="address")]
-    ]
+]
 reply_markup_line = InlineKeyboardMarkup(line_keyboard)
 
-
-
-#подключила клавиатуру
+# подключила клавиатуру
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         f"Привет, {update.effective_user.first_name}! Я твой бот. Чем могу помочь?",
@@ -110,13 +111,13 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
     text = update.message.text.lower()
     dannie = context.user_data.get('ozhidanie_otveta')  # получает данные от пользователя, get метод получения значения
-    reply = 'Я пока не умею отвечать на такое.'
+    reply = 'Я пока не умею отвечать на такое(.'
 
     if dannie:
         if dannie == 'name':
             context.user_data['ozhidanie_otveta'] = False
             await update.message.reply_text(
-                f"приятно познакомиться, {text}! а я просто бот и у меня пока нет имени"
+                f"Приятно познакомиться, {text}! а я просто бот и у меня пока нет имени"
             )
             await update.message.reply_text("продолжим знакомсво",
                                             reply_markup=reply_markup_line
@@ -141,13 +142,12 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         VIKTORINA = False
         await update.message.reply_text(
             "Программа остановлена. пока",
-            # reply_markup=ReplyKeyboardRemove() клава просто убирается после стопа
             reply_markup=reply_markup  # клава возраается к первоначальному этапу
         )
         return
 
     if GAME:
-        await update.message.reply_text(aktivi_game(text),reply_markup=game_markup)
+        await update.message.reply_text(aktivi_game(text), reply_markup=game_markup)
         return
 
     if VIKTORINA:
@@ -167,6 +167,69 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             break
     await update.message.reply_text(reply)
 
+async def reminder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text(
+        "Введите напоминание в формате:ГГ.ММ.ДД ЧЧ:ММ:СС Текст напоминания"
+    )
+    context.user_data['ozidanie'] = 'data_time'
+
+async def handle_reminder_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_input = update.message.text
+    parts = user_input.split(maxsplit=2)
+    if len(parts) != 3 or len(time_parts) != 3:
+        await update.message.reply_text(
+            "Ошибка: введите дату, время и текст напоминания в формате: ГГ.ММ.ДД ЧЧ:ММ:СС Текст напоминания"
+        )
+        return
+
+    date_user, time_user, reminder_text = parts
+    date_parts = date_user.split('.')
+    time_parts = time_user.split(':')
+    if len(time_parts) != 3:
+        await update.message.reply_text(
+            "Ошибка: введите дату, время и текст напоминания в формате: ГГ.ММ.ДД ЧЧ:ММ:СС Текст напоминания"
+        )
+        year = int(date_parts[0])
+        month = int(date_parts[1])
+        day = int(date_parts[2])
+        hour = int(time_parts[0])
+        minute = int(time_parts[1])
+        second = int(time_parts[2])
+
+        if reminder_time <= datetime.now():
+            await update.message.reply_text("Ошибка: дата уже прошла. Введите будущую дату.")
+            return
+
+            # Сохраняем напоминание
+            user_id = update.effective_user.id
+            chat_id = update.effective_chat.id
+
+        if user_id not in napminani:
+            napminani[user_id] = []
+
+        napminani[user_id].append({
+            'текст': reminder_text,
+            'время': reminder_time,
+            'chat_id': chat_id
+        })
+
+        time_str = reminder_time.strftime("%d.%m.%Y %H:%M:%S")
+        await update.message.reply_text(f"✅ Напоминание установлено на {time_str}: {reminder_text}")
+
+    delay = (reminder_time - datetime.now()).total_seconds()
+    if delay > 0:
+        asyncio.create_task(send_reminder(context, chat_id, delay, reminder_text))
+
+    # Сбрасываем состояние
+    context.user_data.clear()
+
+    async def send_reminder(context: ContextTypes.DEFAULT_TYPE, chat_id: int, delay: float, text: str):
+        if delay > 0:
+            await asyncio.sleep(delay)
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=f"⏰ Напоминание: {text}"
+            )
 
 def aktivi_game(text):
     global GAME, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
@@ -179,12 +242,12 @@ def aktivi_game(text):
     SIGRAN_RAUND += 1
 
     if text == variant:
-       result = f"Я быбрал '{variant}'Ничья! 🤝"
+        result = f"Я быбрал '{variant}'Ничья! 🤝"
     elif (text == "камень" and variant == "ножницы") \
-        or (text == "ножницы" and variant == "бумага") \
-        or (text == "бумага" and variant == "камень"):
-            POBEDA_IGROK += 1
-            result = f"Я выбрал '{variant}' 🥇 Ты победил!"
+            or (text == "ножницы" and variant == "бумага") \
+            or (text == "бумага" and variant == "камень"):
+        POBEDA_IGROK += 1
+        result = f"Я выбрал '{variant}' 🥇 Ты победил!"
     else:
         POBEDA_BOT += 1
         result = f"Я выбрал '{variant}' 😔 Ты проиграл!"
@@ -209,7 +272,7 @@ def aktivi_viktrina(text):
     if text == otvet:
         VOPROS_INDEX += 1
         ATTEMPS = 0
-        if VOPROS_INDEX < len(questions[0]): 
+        if VOPROS_INDEX < len(questions[0]):
             return questions[0][VOPROS_INDEX]
         else:
             VIKTORINA = False
@@ -224,6 +287,7 @@ def aktivi_viktrina(text):
         else:
             VIKTORINA = False
             return "Попытки исчерпаны. Программа завершена."
+
 
 async def line_button(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
@@ -250,18 +314,18 @@ async def line_button(update: Update, context: CallbackContext) -> None:
                                       )
         context.user_data['ozhidanie_otveta'] = 'address'
 
-                
 
 async def game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "Выбери камень, ножницы или бумагу. У нас будет 5 раундов.",
-             reply_markup = game_markup
+        reply_markup=game_markup
     )
     global GAME, SIGRAN_RAUND, POBEDA_BOT, POBEDA_IGROK
     GAME = True
     SIGRAN_RAUND = 0
     POBEDA_BOT = 0
     POBEDA_IGROK = 0
+
 
 async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global VIKTORINA, VOPROS_INDEX, ATTEMPS
@@ -270,14 +334,17 @@ async def viktorina(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ATTEMPS = 0
     await update.message.reply_text(
         "Я буду задавать вопросы с вариантами ответа. Отвечай только буквой. У тебя будет 3 попытки на ответ.",
-            reply_markup = viktrina_markup
+        reply_markup=viktrina_markup
     )
     await update.message.reply_text(questions[0][VOPROS_INDEX])
+
 
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("game", game))
 app.add_handler(CommandHandler("viktorina", viktorina))
-app.add_handler(CallbackQueryHandler(line_button))   # этот обработчик обрабатывает именно нажатие лайн кнопок, поблема в том что срабатывает ее дефолтный ответ
+app.add_handler(CommandHandler("reminder", reminder))
+app.add_handler(CallbackQueryHandler(line_button))  # этот обработчик обрабатывает именно нажатие лайн кнопок, поблема в том что срабатывает ее дефолтный ответ
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, greet_if_hello))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND,handle_reminder_input))
 app.run_polling()
