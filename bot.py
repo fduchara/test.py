@@ -175,7 +175,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             date_parts = list(map(int, date_user.split('.')))
             if len(date_parts) != 3:
                 raise ValueError("Неверный формат даты. Ожидаемый формат: ГГ.ММ.ДД")
-            year = date_parts[0]   # год
+            year = year = 2000 + date_parts[0]   # год
             month = date_parts[1]  # месяц
             day = date_parts[2]    # день
 
@@ -188,7 +188,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             second = time_parts[2]  # секунды
             reminder_time = datetime(year, month, day, hour, minute, second)
 
-            if reminder_time >= datetime.now():
+            if reminder_time <= datetime.now():
                 await update.message.reply_text("Ошибка: дата уже прошла. Введите будущую дату.")
                 return
 
@@ -205,7 +205,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 'chat_id': chat_id
             })
 
-            time_str = reminder_time.strftime("%d.%m.%Y %H:%M:%S")
+            time_str = reminder_time.strftime("%y.%m.%d. %H:%M:%S")
             await update.message.reply_text(f" Напоминание установлено на {time_str}: {reminder_text}")
 
             delay = (reminder_time - datetime.now()).total_seconds()
@@ -346,6 +346,15 @@ async def reminder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Введите напоминание в формате: ГГ.ММ.ДД ЧЧ:ММ:СС Текст напоминания"
     )
     context.user_data['waiting_for_reminder'] = True
+
+async def send_reminder(context: ContextTypes.DEFAULT_TYPE, chat_id: int, delay: float, text: str):
+    if delay > 0:
+        await asyncio.sleep(delay)
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text=f" Напоминание: {text}"
+        )
+
 
 
 app = ApplicationBuilder().token(TOKEN).build()
