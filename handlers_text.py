@@ -17,6 +17,7 @@ POBEDA_BOT = 0
 POBEDA_IGROK = 0
 napminani = {}
 
+
 async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
     text = update.message.text.lower()
