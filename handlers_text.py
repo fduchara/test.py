@@ -21,7 +21,6 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     global GAME, VIKTORINA, VOPROS_INDEX, ATTEMPS, SIGRAN_RAUND, MAX_GAMES, POBEDA_BOT, POBEDA_IGROK
     text = update.message.text.lower()
     dannie = context.user_data.get('ozhidanie_otveta')
-    reply = 'Я пока не умею отвечать на такое(.'
 
     if dannie:
         if dannie == 'name':
@@ -47,6 +46,15 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "Программа остановлена. Пока!",
             reply_markup=reply_markup
         )
+        return
+
+    if text == "игра":
+        GAME = True
+        await game(update, context)
+        return
+    elif text == "викторина":
+        VIKTORINA = True
+        await viktorina(update, context)
         return
 
     if GAME:
@@ -75,19 +83,18 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             date_parts = list(map(int, date_user.split('.')))
             if len(date_parts) != 3:
                 raise ValueError("Неверный формат даты. Ожидаемый формат: ГГ.ММ.ДД")
-            year = year = 2000 + date_parts[0]   # год
+            year = 2000 + date_parts[0]  # год
             month = date_parts[1]  # месяц
-            day = date_parts[2]    # день
+            day = date_parts[2]  # день
 
             # разбираем время
             time_parts = list(map(int, time_user.split(':')))
             if len(time_parts) != 3:
                 raise ValueError("Неверный формат времени")
-            hour = time_parts[0]    # часы
+            hour = time_parts[0]  # часы
             minute = time_parts[1]  # минуты
             second = time_parts[2]  # секунды
             reminder_time = datetime(year, month, day, hour, minute, second)
-
             if reminder_time <= datetime.now():
                 await update.message.reply_text("Ошибка: дата уже прошла. Введите будущую дату.")
                 return
@@ -105,8 +112,8 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 'chat_id': chat_id
             })
 
-            time_str = reminder_time.strftime("%y.%m.%d. %H:%M:%S")
-            await update.message.reply_text(f" Напоминание установлено на {time_str}: {reminder_text}")
+            time_str = reminder_time.strftime("%y.%m.%d в %H:%M:%S")
+            await update.message.reply_text(f"✅ Напоминание установлено на {time_str}: {reminder_text}")
 
             delay = (reminder_time - datetime.now()).total_seconds()
             if delay > 0:
@@ -120,14 +127,7 @@ async def greet_if_hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         context.user_data.clear()
         return
 
-    if text == "игра":
-        await game(update, context)
-        return
-    elif text == "викторина":
-        await viktorina(update, context)
-        return
-
-    # Обработка стандартных фраз
+    reply = 'Я пока не умею отвечать на такое('
     for i in range(len(questions2[0])):
         if text in questions2[0][i] and questions2[1][i]:
             reply = random.choice(questions2[1][i])
