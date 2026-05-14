@@ -24,27 +24,29 @@ cursor.execute('SELECT id FROM Users WHERE id = ?', (tg_id,))
 # выполняем запрос, если нет ответа добавляем нового пользука.
 if not cursor.fetchall():
     cursor.execute('INSERT INTO Users (id, first_name) VALUES (?, ?)', (tg_id, tg_first_name))
-# сохраняю запись в бд
+    # сохраняю запись в бд
     connection.commit()
 
-# Выбираем всех пользователей
+# Полный поиск по таблице. Выбираем всех пользователей
 cursor.execute('SELECT * FROM Users')
 users = cursor.fetchall()
-
 # Выводим результаты
 for user in users:
-  print(user)
+    print(user)
 
 # проверка статуса викторины
-cursor.execute('SELECT id, first_name, state_viktorina FROM Users WHERE state_viktorina = ?', (True,))
+# запрос в бд юзерс. по полям фирснейм, викторина
+cursor.execute('SELECT first_name, state_viktorina FROM Users WHERE state_viktorina = ?', (True,))
 viktorina = cursor.fetchall()
+# вывод всех строк вывода
 for user in viktorina:
-  print("Играют в викторину")
-  print(user)
+    print("Играют в викторину")
+    print(user)
 
+# пустая строка, отделяем куски вывода
 print()
 
-# Обновляем состояние игры в викторину
+# Обновляем состояние игры в викторину меняю state_viktorina у ид 151311955 в труе
 cursor.execute('UPDATE Users SET state_viktorina = ? WHERE id = ?', (True, '151311955'))
 connection.commit()
 
@@ -52,8 +54,8 @@ connection.commit()
 cursor.execute('SELECT id, first_name, state_viktorina FROM Users WHERE state_viktorina = ?', (True,))
 viktorina = cursor.fetchall()
 for user in viktorina:
-  print("Играют в викторину")
-  print(user)
+    print("Играют в викторину")
+    print(user)
 
 # Закрываем соединение
 connection.close()
